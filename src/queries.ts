@@ -69,6 +69,9 @@ export async function findStudent(id: string): Promise<Student | undefined> {
 export async function studentsIn(deptName: string): Promise<Student[]> {
   const result = await pool.query<Student>(
     `SELECT id, name,
+            dept_name AS "deptName",
+            tot_cred::int AS "totCred"
+     FROM student
 }
 
 // --- A2. A join -----------------------------------------------------------
