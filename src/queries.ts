@@ -72,6 +72,9 @@ export async function studentsIn(deptName: string): Promise<Student[]> {
             dept_name AS "deptName",
             tot_cred::int AS "totCred"
      FROM student
+     WHERE dept_name = $1
+     ORDER BY name`,
+    [deptName]
 }
 
 // --- A2. A join -----------------------------------------------------------
