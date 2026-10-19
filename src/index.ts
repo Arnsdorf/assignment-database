@@ -20,25 +20,27 @@ await pool.query("DELETE FROM student WHERE id = '90000'");
 console.log('connected');
 
 // --- Part A ---
-console.log((await listStudents(5, 0)).map(s => s.id));   // 00128 12345 19991 23121 44553
-console.log((await listStudents(5, 5)).map(s => s.id));   // 45678 54321 55739 70557 76543
-console.log(await findStudent('00128')); //   { id: '00128', name: 'Zhang', deptName: 'Comp. Sci.', totCred: 102 }
-console.log(await findStudent('99999'));                  // undefined
-console.log((await studentsIn('Comp. Sci.')).map(s => s.name)); //   [ 'Brown', 'Shankar', 'Williams', 'Zhang' ]
-console.log(await coursesFor('00128'));
+//console.log((await listStudents(5, 0)).map(s => s.id));   // 00128 12345 19991 23121 44553
+//console.log((await listStudents(5, 5)).map(s => s.id));   // 45678 54321 55739 70557 76543
+//console.log(await findStudent('00128')); //   { id: '00128', name: 'Zhang', deptName: 'Comp. Sci.', totCred: 102 }
+//console.log(await findStudent('99999'));                  // undefined
+//console.log((await studentsIn('Comp. Sci.')).map(s => s.name)); //   [ 'Brown', 'Shankar', 'Williams', 'Zhang' ]
+//console.log(await coursesFor('00128'));
 //   [ { courseId: 'CS-101', title: 'Intro. to Computer Science', grade: '12' },
 //     { courseId: 'CS-347', title: 'Database System Concepts', grade: '10' } ]
 //   Grades on the Danish scale, because the query calls danish_grade.
-console.log(await coursesFor('70557'));                   // []
-console.log(await studentsPerDepartment());
+//console.log(await coursesFor('70557'));                   // []
+//console.log(await studentsPerDepartment());
 //   [ { deptName: 'Biology', students: 1 }, { deptName: 'Comp. Sci.', students: 4 }, ... ]
-console.log(typeof (await studentsPerDepartment())[0].students);   // number
+//console.log(typeof (await studentsPerDepartment())[0].students);   // number
 
 // --- Part B1: the transaction ---
-// console.log(await insertStudent(
-//   { id: '90000', name: 'Testperson', deptName: 'Music', totCred: 0 }));
+//console.log(await insertStudent(
+  // { id: '90000', name: 'Testperson', deptName: 'Music', totCred: 0 }));
+//console.log(await deleteStudent('90000')); // forventet: true
+//console.log(await deleteStudent('90000')); // forventet: false
 //   { id: '90000', name: 'Testperson', deptName: 'Music', totCred: 0 }
-// console.log(await enrolInTypeScript(
+//console.log(await enrolInTypeScript(
 //   { studentId: '90000', courseId: 'MU-199', secId: '1', semester: 'Spring', year: 2018 }));
 //   3   (the credits of MU-199)
 
@@ -70,8 +72,8 @@ console.log(typeof (await studentsPerDepartment())[0].students);   // number
 //   the same three numbers, in a third of the time
 
 // --- Part C3, and tidying up ---
-// await pool.query("DELETE FROM takes WHERE id = '90000'");
-// console.log(await removeAndCheckBroken('90000'));         // true: still there
-// console.log(await removeAndCheck('90000'));               // false: really gone
+//await pool.query("DELETE FROM takes WHERE id = '90000'");
+//console.log(await removeAndCheckBroken('90000'));         // true: still there
+//console.log(await removeAndCheck('90000'));               // false: really gone
 
 await pool.end();
