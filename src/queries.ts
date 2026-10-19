@@ -46,6 +46,9 @@ export async function listStudents(limit: number, offset: number): Promise<Stude
      ORDER BY id
      LIMIT $1 OFFSET $2`,
     [limit, offset]
+  );
+
+  return result.rows;
 }
 
 /** One student, or undefined when there is no such id. */
