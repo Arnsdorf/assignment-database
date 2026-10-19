@@ -55,6 +55,9 @@ export async function listStudents(limit: number, offset: number): Promise<Stude
 export async function findStudent(id: string): Promise<Student | undefined> {
   const result = await pool.query<Student>(
     `SELECT id, name,
+            dept_name AS "deptName",
+            tot_cred::int AS "totCred"
+     FROM student
 }
 
 /** The students of one department, ordered by name. */
