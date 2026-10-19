@@ -61,6 +61,8 @@ export async function findStudent(id: string): Promise<Student | undefined> {
      WHERE id = $1`,
     [id]
   );
+
+  return result.rows[0];
 }
 
 /** The students of one department, ordered by name. */
