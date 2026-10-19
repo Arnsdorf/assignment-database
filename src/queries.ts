@@ -58,6 +58,9 @@ export async function findStudent(id: string): Promise<Student | undefined> {
             dept_name AS "deptName",
             tot_cred::int AS "totCred"
      FROM student
+     WHERE id = $1`,
+    [id]
+  );
 }
 
 /** The students of one department, ordered by name. */
