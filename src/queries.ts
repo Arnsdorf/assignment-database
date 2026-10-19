@@ -40,6 +40,9 @@ export interface DeptCount {
 export async function listStudents(limit: number, offset: number): Promise<Student[]> {
   const result = await pool.query<Student>(
     `SELECT id, name,
+            dept_name AS "deptName",
+            tot_cred::int AS "totCred"
+     FROM student
 }
 
 /** One student, or undefined when there is no such id. */
