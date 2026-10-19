@@ -75,6 +75,9 @@ export async function studentsIn(deptName: string): Promise<Student[]> {
      WHERE dept_name = $1
      ORDER BY name`,
     [deptName]
+  );
+
+  return result.rows;
 }
 
 // --- A2. A join -----------------------------------------------------------
