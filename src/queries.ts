@@ -43,6 +43,9 @@ export async function listStudents(limit: number, offset: number): Promise<Stude
             dept_name AS "deptName",
             tot_cred::int AS "totCred"
      FROM student
+     ORDER BY id
+     LIMIT $1 OFFSET $2`,
+    [limit, offset]
 }
 
 /** One student, or undefined when there is no such id. */
