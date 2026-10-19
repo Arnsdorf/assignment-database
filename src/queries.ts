@@ -67,8 +67,8 @@ export async function findStudent(id: string): Promise<Student | undefined> {
 
 /** The students of one department, ordered by name. */
 export async function studentsIn(deptName: string): Promise<Student[]> {
-  // TODO
-  throw new Error('not implemented');
+  const result = await pool.query<Student>(
+    `SELECT id, name,
 }
 
 // --- A2. A join -----------------------------------------------------------
