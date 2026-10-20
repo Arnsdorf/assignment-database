@@ -5,8 +5,8 @@
 // as often as you like.
 
 import { pool } from './db.js';
-// import {
-//   listStudents, findStudent, studentsIn, coursesFor,
+import {
+listStudents, findStudent, studentsIn, coursesFor,
 //   studentsPerDepartment, insertStudent, deleteStudent,
 // } from './queries.js';
 // import { enrolInTypeScript } from './transaction.js';
