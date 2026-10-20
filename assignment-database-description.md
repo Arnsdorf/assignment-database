@@ -14,7 +14,7 @@ Download the zip with the starting project from the course website and
 unpack it. Everything you need is inside. Open that folder in VS Code (File >
 Open Folder) and open a terminal in it.
 
-Copy `.env` to `.env` and put your own database password in it. Then
+Copy `.env.example` to `.env` and put your own database password in it. Then
 install the dependencies and run the project once, so you know the loop you
 will be working in:
 

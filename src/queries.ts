@@ -38,46 +38,20 @@ export interface DeptCount {
 
 /** A page of students, ordered by id. */
 export async function listStudents(limit: number, offset: number): Promise<Student[]> {
-  const result = await pool.query<Student>(
-    `SELECT id, name,
-            dept_name AS "deptName",
-            tot_cred::int AS "totCred"
-     FROM student
-     ORDER BY id
-     LIMIT $1 OFFSET $2`,
-    [limit, offset]
-  );
-
-  return result.rows;
+  // TODO
+  throw new Error('not implemented');
 }
 
 /** One student, or undefined when there is no such id. */
 export async function findStudent(id: string): Promise<Student | undefined> {
-  const result = await pool.query<Student>(
-    `SELECT id, name,
-            dept_name AS "deptName",
-            tot_cred::int AS "totCred"
-     FROM student
-     WHERE id = $1`,
-    [id]
-  );
-
-  return result.rows[0];
+  // TODO
+  throw new Error('not implemented');
 }
 
 /** The students of one department, ordered by name. */
 export async function studentsIn(deptName: string): Promise<Student[]> {
-  const result = await pool.query<Student>(
-    `SELECT id, name,
-            dept_name AS "deptName",
-            tot_cred::int AS "totCred"
-     FROM student
-     WHERE dept_name = $1
-     ORDER BY name`,
-    [deptName]
-  );
-
-  return result.rows;
+  // TODO
+  throw new Error('not implemented');
 }
 
 // --- A2. A join -----------------------------------------------------------
