@@ -126,5 +126,5 @@ export async function deleteStudent(id: string): Promise<boolean> {
       'WHERE id = $1',
       [id]
   );
-  return result.rowCount > 0;
+  return result.rowCount === 1 ;
 }
