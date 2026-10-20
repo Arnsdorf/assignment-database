@@ -1,5 +1,3 @@
-// Part C - asynchronous code against a real database
-
 import { pool } from './db.js';
 import { findStudent, coursesFor, deleteStudent } from './queries.js';
 
@@ -9,68 +7,51 @@ export interface Overview {
   departments: number;
 }
 
-// --- C1. Steps that depend on each other ----------------------------------
-
-/**
- * The title of the first course a student takes, or undefined when the
- * student does not exist or takes nothing.
- *
- * Two steps, the second needing the first. Handle a missing student with
- * try/catch or with a check, and say in a comment which you chose and why.
- */
 export async function firstCourseTitle(studentId: string): Promise<string | undefined> {
-  // TODO
-  throw new Error('not implemented');
+  const student = await findStudent(studentId);
+  if (student === undefined) return undefined; // tjekker her, fordi en manglende student ikke er en fejl
+  const courses = await coursesFor(studentId);
+  return courses[0]?.title; // ?. giver undefined, hvis der ikke er et kursus
 }
 
-// --- C2. Steps that do not depend on each other ---------------------------
-
-/**
- * Three counts: students, courses, departments.
- *
- * Write it twice. overviewSlowly does one query after another; overview
- * starts all three together. The runner times both.
- *
- * Use this query, and note the pg_sleep: each count is made to take about
- * 200 ms on purpose.
- *
- *     SELECT pg_sleep(0.2), count(*)::int AS total FROM student
- *
- * Without it the three counts against a local database finish in about a
- * millisecond each, and starting them together costs more than it saves,
- * because the pool has to open two more connections. Waiting is what makes
- * the difference visible, and on a real server the waiting is real.
- */
 export async function overviewSlowly(): Promise<Overview> {
-  // TODO
-  throw new Error('not implemented');
+  const students = await pool.query<{ total: number }>(
+    'SELECT pg_sleep(0.2), count(*)::int AS total FROM student'
+  );
+  const courses = await pool.query<{ total: number }>(
+    'SELECT pg_sleep(0.2), count(*)::int AS total FROM course'
+  );
+  const departments = await pool.query<{ total: number }>(
+    'SELECT pg_sleep(0.2), count(*)::int AS total FROM department'
+  );
+  return {
+    students: students.rows[0].total,
+    courses: courses.rows[0].total,
+    departments: departments.rows[0].total
+  };
 }
 
 export async function overview(): Promise<Overview> {
-  // TODO
-  throw new Error('not implemented');
+  const [students, courses, departments] = await Promise.all([ // starter uafhængige optællinger samtidig
+    pool.query<{ total: number }>('SELECT pg_sleep(0.2), count(*)::int AS total FROM student'),
+    pool.query<{ total: number }>('SELECT pg_sleep(0.2), count(*)::int AS total FROM course'),
+    pool.query<{ total: number }>('SELECT pg_sleep(0.2), count(*)::int AS total FROM department')
+  ]);
+  return {
+    students: students.rows[0].total,
+    courses: courses.rows[0].total,
+    departments: departments.rows[0].total
+  };
 }
 
-// --- C3. The forgotten await ----------------------------------------------
-
-/**
- * Written for you, and wrong.
- *
- * It should delete a student and then report whether they are still there.
- * It reports that they are. Run it, explain in a comment what happens and
- * in which order, then write the corrected version below.
- *
- * There is a second problem, worse than the wrong answer: if the delete
- * fails, who finds out?
- */
 export async function removeAndCheckBroken(id: string): Promise<boolean> {
-  deleteStudent(id);
+  deleteStudent(id); // mangler await: søgningen kan nå først, og fejl overses
   const still = await findStudent(id);
   return still !== undefined;
 }
 
-/** The same thing, correct: false when the student is really gone. */
 export async function removeAndCheck(id: string): Promise<boolean> {
-  // TODO
-  throw new Error('not implemented');
+  await deleteStudent(id);
+  const still = await findStudent(id);
+  return still !== undefined;
 }

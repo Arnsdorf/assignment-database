@@ -1,8 +1,3 @@
-// Part B2 and B3 - calling what you wrote in the database
-//
-// Write the routines in procedures.sql first, in pgAdmin. Calling them is an
-// ordinary query: a FUNCTION goes inside a SELECT, a PROCEDURE uses CALL.
-
 import { pool } from './db.js';
 
 export interface TranscriptRow {
@@ -11,14 +6,6 @@ export interface TranscriptRow {
   grade: string | null;
 }
 
-/**
- * The transcript of a student, from the stored function:
- *
- *     SELECT * FROM student_transcript($1)
- *
- * The function raises an exception for an unknown student, which arrives
- * here as a rejected promise. Let it travel on: this one throws.
- */
 export async function transcriptOf(studentId: string): Promise<TranscriptRow[]> {
   const result = await pool.query<TranscriptRow>(
     `SELECT course_id AS "courseId", title, grade
@@ -28,20 +15,13 @@ export async function transcriptOf(studentId: string): Promise<TranscriptRow[]> 
   return result.rows;
 }
 
-/**
- * The same, but undefined instead of an error when the student does not
- * exist.
- *
- * An exception you raised yourself arrives with err.code === 'P0001'. Any
- * other code is a real failure and must be re-thrown rather than swallowed:
- * a syntax error in your SQL is not "no such student".
- */
 export async function transcriptOrUndefined(
   studentId: string): Promise<TranscriptRow[] | undefined> {
     try {
     return await transcriptOf(studentId);
   } catch (error) {
-    if ((error as { code?: string }).code === 'P0001') {
+    if ((error as { code?: string; message?: string }).code === 'P0001' &&
+        (error as { message?: string }).message === `No student with id ${studentId}`) { // kun vores egen "ingen student"-fejl
       return undefined;
     }
     throw error;
@@ -49,28 +29,12 @@ export async function transcriptOrUndefined(
 }
 
 
-/**
- * Enrols a student by calling the stored procedure:
- *
- *     CALL enrol_student($1, $2, $3, $4, $5, NULL)
- *
- * The INOUT parameter comes back as a row. Note that tot_cred is numeric, so
- * the new total arrives as a string: convert it.
- *
- * Returns the new credit total.
- */
 export async function enrolWithProcedure(
   studentId: string, courseId: string, secId: string,
   semester: string, year: number): Promise<number> {
- await pool.query(
-    'CALL enrol_student($1, $2, $3, $4, $5)',
+  const result = await pool.query( // kalder proceduren og får INOUT-resultatet tilbage
+    'CALL enrol_student($1, $2, $3, $4, $5, NULL)',
     [studentId, courseId, secId, semester, year]
   );
-
-  const result = await pool.query(
-    'SELECT tot_cred FROM student WHERE id = $1',
-    [studentId]
-  );
-
-  return Number(result.rows[0].tot_cred);
+  return Number(result.rows[0].new_total);
 }

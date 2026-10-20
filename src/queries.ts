@@ -1,19 +1,3 @@
-// Part A - queries
-//
-// One thing to know before you start: this database stores grades on the
-// American letter scale (A, A-, B+, ...), because that is the scale it came
-// with. We use the Danish 7-point scale everywhere else, so the conversion
-// happens in the database, in the danish_grade function you wrote in Task 5
-// of the database exercises. Every query below that returns a grade calls it.
-//
-// Three rules for every query here:
-//   values go in as $1, $2, never joined into the SQL text
-//   columns are renamed for TypeScript: tot_cred AS "totCred"
-//   numeric columns are cast: tot_cred::int, count(*)::int
-//
-// The module structure of the lesson Building the data access layer comes
-// later; for this assignment one file is enough.
-
 import { pool } from './db.js';
 
 export interface Student {
@@ -34,12 +18,9 @@ export interface DeptCount {
   students: number;
 }
 
-// --- A1. Reading ----------------------------------------------------------
-
-/** A page of students, ordered by id. */
 export async function listStudents(limit: number, offset: number): Promise<Student[]> {
   const result = await pool.query<Student>(
-  `SELECT id, name, dept_name AS "deptName", tot_cred AS "totCred"
+  `SELECT id, name, dept_name AS "deptName", tot_cred::int AS "totCred"
      FROM student
      ORDER BY id
      LIMIT $1 OFFSET $2`,
@@ -49,7 +30,6 @@ export async function listStudents(limit: number, offset: number): Promise<Stude
 }
 
 
-/** One student, or undefined when there is no such id. */
 export async function findStudent(id: string): Promise<Student | undefined> {
     const result = await pool.query<Student>(
   `SELECT id, name,
@@ -57,16 +37,15 @@ export async function findStudent(id: string): Promise<Student | undefined> {
             tot_cred::int AS "totCred"
      FROM student
      WHERE id = $1`,
-    [id]
+    [id] // sender id som $1, ikke SQL-tekst
   );
-  return result.rows[0];
+  return result.rows[0]; // undefined, når studenten ikke findes
 }
 
 
-/** The students of one department, ordered by name. */
 export async function studentsIn(deptName: string): Promise<Student[]> {
 const result = await pool.query<Student>(
-    `SELECT id, name, dept_name AS "deptName", tot_cred AS "totCred"
+    `SELECT id, name, dept_name AS "deptName", tot_cred::int AS "totCred"
      FROM student
      WHERE dept_name = $1
      ORDER BY name`,
@@ -76,20 +55,8 @@ const result = await pool.query<Student>(
 }
 
 
-// --- A2. A join -----------------------------------------------------------
-
-/**
- * The courses a student takes, with the grade, ordered by course id.
- * Two tables: takes and course. A student who takes nothing gives an empty
- * array, not an error.
- *
- * The grade must come back on the Danish scale, so call danish_grade from
- * the database exercises inside the query:
- *
- *     SELECT ..., danish_grade(t.grade) AS grade
- */
 export async function coursesFor(studentId: string): Promise<CourseRow[]> {
-const result = await pool.query<CourseGrade>(
+const result = await pool.query<CourseRow>(
     `SELECT t.course_id AS "courseId",
             c.title,
             danish_grade(t.grade) AS grade
@@ -104,40 +71,29 @@ const result = await pool.query<CourseGrade>(
 
 
 
-// --- A3. Aggregating ------------------------------------------------------
-
-/**
- * How many students each department has, ordered by department name.
- * Without the cast, count(*) arrives as a string. Try it both ways and
- * look at the type of what you get.
- */
 export async function studentsPerDepartment(): Promise<DeptCount[]> {
-   const result = await pool.query<DepartmentCount>(
+   const result = await pool.query<DeptCount>( // ::int gør count til et tal
     `SELECT dept_name AS "deptName",
             COUNT(*)::int AS students
      FROM student
      GROUP BY dept_name
      ORDER BY dept_name`
   );
-  return result.rows;
+  return result.rows; // GROUP BY giver en række pr. afdeling
 }
 
 
 
-// --- A4. Writing ----------------------------------------------------------
-
-/** Stores a student and returns the row the database stored. */
 export async function insertStudent(student: Student): Promise<Student> {
    const result = await pool.query<Student>(
     `INSERT INTO student (id, name, dept_name, tot_cred)
      VALUES ($1, $2, $3, $4)
-     RETURNING id, name, dept_name AS "deptName", tot_cred AS "totCred"`,
+     RETURNING id, name, dept_name AS "deptName", tot_cred::int AS "totCred"`,
     [student.id, student.name, student.deptName, student.totCred]
   );
-  return result.rows[0];
+  return result.rows[0]; // tager rækken fra RETURNING
 }
 
-/** True when a row was deleted, false when there was nothing to delete. */
 export async function deleteStudent(id: string): Promise<boolean> {
   const result = await pool.query(
     `DELETE FROM student WHERE id = $1`,
