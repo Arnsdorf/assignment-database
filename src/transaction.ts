@@ -1,13 +1,14 @@
 // Part B1 - one operation, two statements, one transaction
 
-import { pool } from './db.js';
+import {pool} from './db.js';
+import {Client} from "pg";
 
 export interface EnrolInput {
-  studentId: string;
-  courseId: string;
-  secId: string;
-  semester: string;
-  year: number;
+    studentId: string;
+    courseId: string;
+    secId: string;
+    semester: string;
+    year: number;
 }
 
 /**
@@ -30,6 +31,46 @@ export interface EnrolInput {
  * Returns the student's new credit total.
  */
 export async function enrolInTypeScript(input: EnrolInput): Promise<number> {
-  // TODO
-  throw new Error('not implemented');
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        const courseQuery = 'SELECT * FROM course WHERE course_id = $1';
+        const courses = await client.query(courseQuery,
+            [input.courseId]);
+
+        if (courses.rows.length === 0) {
+            throw new Error(`No course with id ${input.courseId}`);
+        }
+        const courseCredits = courses.rows[0].credits;
+
+        const insertTakesQuery = `INSERT INTO takes (id, course_id, sec_id, semester, year, grade)
+                                  VALUES ($1, $2, $3, $4, $5, NULL)`;
+
+        await client.query(insertTakesQuery, [
+            input.studentId,
+            input.courseId,
+            input.secId,
+            input.semester,
+            input.year
+        ]);
+
+        const updateStudent = `UPDATE student
+                               SET tot_cred = tot_cred + $1
+                               WHERE id = $2 RETURNING tot_cred::int AS "totCred"`;
+
+        const student = await client.query(updateStudent, [courseCredits, input.studentId]);
+        if (student.rows.length === 0 ) {
+          throw new Error(`No student with id ${input.studentId}`);
+        }
+        const newTotalCredits = student.rows[0].totCred;
+
+        await client.query('COMMIT');
+        return newTotalCredits;
+    }catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    }finally {
+      client.release();
+    }
 }

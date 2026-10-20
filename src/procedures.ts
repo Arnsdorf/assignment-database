@@ -20,8 +20,16 @@ export interface TranscriptRow {
  * here as a rejected promise. Let it travel on: this one throws.
  */
 export async function transcriptOf(studentId: string): Promise<TranscriptRow[]> {
-  // TODO
-  throw new Error('not implemented');
+  try{
+   const query = 'SELECT * FROM student_transcript($1)';
+   const result = await pool.query(query, [studentId]);
+
+   return result.rows;
+
+  }catch(error: any){
+    console.error(`'error while retrieving transcript: '${error.message}' `);
+    throw error;
+  }
 }
 
 /**

@@ -36,18 +36,18 @@ console.log('connected');
 
 // --- Part B1: the transaction ---
 //console.log(await insertStudent(
-  // { id: '90000', name: 'Testperson', deptName: 'Music', totCred: 0 }));
+   //{ id: '90000', name: 'Testperson', deptName: 'Music', totCred: 0 }));
 //console.log(await deleteStudent('90000')); // forventet: true
 //console.log(await deleteStudent('90000')); // forventet: false
 //   { id: '90000', name: 'Testperson', deptName: 'Music', totCred: 0 }
 //console.log(await enrolInTypeScript(
-//   { studentId: '90000', courseId: 'MU-199', secId: '1', semester: 'Spring', year: 2018 }));
+   //{ studentId: '90000', courseId: 'MU-199', secId: '1', semester: 'Spring', year: 2018 }));
 //   3   (the credits of MU-199)
 
 // --- Part B2 and B3: the routines in the database ---
 // First check that danish_grade, from the database exercises, is still there:
-// console.log((await pool.query(
-//   "SELECT danish_grade('A') AS a, danish_grade('C-') AS c, danish_grade(NULL) AS n")).rows[0]);
+console.log((await pool.query(
+   "SELECT danish_grade('A') AS a, danish_grade('C-') AS c, danish_grade(NULL) AS n")).rows[0]);
 //   { a: '12', c: '02', n: null }
 // console.log(await transcriptOf('00128'));
 //   two rows: CS-101 with 12, CS-347 with 10
