@@ -51,7 +51,7 @@ console.log((await pool.query(
 //   { a: '12', c: '02', n: null }
 // console.log(await transcriptOf('00128'));
 //   two rows: CS-101 with 12, CS-347 with 10
-// console.log(await transcriptOrUndefined('99999'));        // undefined
+//console.log(await transcriptOrUndefined('99999'));        // undefined
 // try {
 //   await transcriptOf('99999');
 // } catch (err) {
