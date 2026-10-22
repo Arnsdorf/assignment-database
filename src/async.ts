@@ -100,7 +100,7 @@ export async function removeAndCheckBroken(id: string): Promise<boolean> {
   // without waiting for the delete and can find the student before deletion
   // finishes, returning true. This is a race: the result depends on timing.
   // If deletion fails, the caller cannot catch it through this function:
-  // the ignored promise rejects without a handler (an unhandled rejection).
+  // the ignored promise rejects without a handler.
   deleteStudent(id);
   const still = await findStudent(id);
   return still !== undefined;
