@@ -19,9 +19,20 @@ export interface Overview {
  * try/catch or with a check, and say in a comment which you chose and why.
  */
 export async function firstCourseTitle(studentId: string): Promise<string | undefined> {
-  // TODO
-  throw new Error('not implemented');
+  const student = await findStudent(studentId);
+
+  if (!student) {
+    return undefined;
+  }
+
+  const courses = await coursesFor(studentId);
+  if (courses.length === 0) {
+    return undefined;
+  }
+  return courses[0].title;
 }
+//Sigurd: I use a check because findStudent returns undefined for a missing student.
+//Should pass database errors to the code that calls this function.
 
 // --- C2. Steps that do not depend on each other ---------------------------
 

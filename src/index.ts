@@ -57,7 +57,7 @@ console.log((await pool.query(
 // } catch (err) {
 //   console.log('caught:', (err as Error).message);         // No student with id 99999
 // }
-// console.log(await enrolWithProcedure('90000', 'CS-101', '1', 'Fall', 2017));
+//console.log(await enrolWithProcedure('90000', 'CS-101', '1', 'Fall', 2017));
 //   7   (3 from before, plus the 4 credits of CS-101)
 
 // --- Part C ---
