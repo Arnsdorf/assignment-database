@@ -57,18 +57,18 @@ console.log('connected');
 // } catch (err) {
 //   console.log('caught:', (err as Error).message);         // No student with id 99999
 // }
-// console.log(await enrolWithProcedure('90000', 'CS-101', '1', 'Fall', 2017));
+ console.log(await enrolWithProcedure('90000', 'CS-101', '1', 'Fall', 2017));
 //   7   (3 from before, plus the 4 credits of CS-101)
 
 // --- Part C ---
-// console.log(await firstCourseTitle('00128'));             // Intro. to Computer Science
-// console.log(await firstCourseTitle('99999'));             // undefined
-// console.time('one after another');
-// console.log(await overviewSlowly());
-// console.timeEnd('one after another');   // about 600 ms
-// console.time('together');
-// console.log(await overview());
-// console.timeEnd('together');            // about 200 ms
+ console.log(await firstCourseTitle('00128'));             // Intro. to Computer Science
+ console.log(await firstCourseTitle('99999'));             // undefined
+ console.time('one after another');
+ console.log(await overviewSlowly());
+ console.timeEnd('one after another');   // about 600 ms
+ console.time('together');
+ console.log(await overview());
+ console.timeEnd('together');            // about 200 ms
 //   the same three numbers, in a third of the time
 
 // --- Part C3, and tidying up ---

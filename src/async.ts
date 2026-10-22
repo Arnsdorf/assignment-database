@@ -19,8 +19,18 @@ export interface Overview {
  * try/catch or with a check, and say in a comment which you chose and why.
  */
 export async function firstCourseTitle(studentId: string): Promise<string | undefined> {
-  // TODO
-  throw new Error('not implemented');
+
+  // I chose a check because findStudent returns undefined
+  // when the student does not exist, rather than throwing an error.
+  const student = await findStudent(studentId);
+
+  if (student === undefined) {
+    return undefined;
+  }
+
+  const courses = await coursesFor(studentId);
+
+  return courses[0]?.title;
 }
 
 // --- C2. Steps that do not depend on each other ---------------------------
@@ -42,13 +52,40 @@ export async function firstCourseTitle(studentId: string): Promise<string | unde
  * the difference visible, and on a real server the waiting is real.
  */
 export async function overviewSlowly(): Promise<Overview> {
-  // TODO
-  throw new Error('not implemented');
+  const students = await pool.query(
+      'SELECT pg_sleep(0.2), count(*)::int AS total FROM student'
+  );
+  const courses = await pool.query(
+      'SELECT pg_sleep(0.2), count(*)::int AS total FROM course'
+  );
+  const departments = await pool.query(
+      'SELECT pg_sleep(0.2), count(*)::int AS total FROM department'
+  );
+
+  return {
+    students: students.rows[0].total,
+    courses: courses.rows[0].total,
+    departments: departments.rows[0].total
+  };
 }
 
 export async function overview(): Promise<Overview> {
-  // TODO
-  throw new Error('not implemented');
+  const [students, courses, departments] = await Promise.all([
+    pool.query(
+        'SELECT pg_sleep(0.2), count(*)::int AS total FROM student'
+    ),
+    pool.query(
+        'SELECT pg_sleep(0.2), count(*)::int AS total FROM course'
+    ),
+    pool.query(
+        'SELECT pg_sleep(0.2), count(*)::int AS total FROM department'
+    )
+  ]);
+  return {
+    students: students.rows[0].total,
+    courses: courses.rows[0].total,
+    departments: departments.rows[0].total
+  };
 }
 
 // --- C3. The forgotten await ----------------------------------------------
@@ -71,6 +108,7 @@ export async function removeAndCheckBroken(id: string): Promise<boolean> {
 
 /** The same thing, correct: false when the student is really gone. */
 export async function removeAndCheck(id: string): Promise<boolean> {
-  // TODO
-  throw new Error('not implemented');
+  await deleteStudent(id);
+  const still = await findStudent(id);
+  return still !== undefined;
 }
