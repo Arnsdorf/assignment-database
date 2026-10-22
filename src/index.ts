@@ -36,7 +36,7 @@ console.log('connected');
 
 // --- Part B1: the transaction ---
 //console.log(await insertStudent(
-   //{ id: '90000', name: 'Testperson', deptName: 'Music', totCred: 0 }));
+  // { id: '90000', name: 'Testperson', deptName: 'Music', totCred: 0 }));
 //console.log(await deleteStudent('90000')); // forventet: true
 //console.log(await deleteStudent('90000')); // forventet: false
 //   { id: '90000', name: 'Testperson', deptName: 'Music', totCred: 0 }
@@ -46,8 +46,8 @@ console.log('connected');
 
 // --- Part B2 and B3: the routines in the database ---
 // First check that danish_grade, from the database exercises, is still there:
-console.log((await pool.query(
-   "SELECT danish_grade('A') AS a, danish_grade('C-') AS c, danish_grade(NULL) AS n")).rows[0]);
+//console.log((await pool.query(
+  // "SELECT danish_grade('A') AS a, danish_grade('C-') AS c, danish_grade(NULL) AS n")).rows[0]);
 //   { a: '12', c: '02', n: null }
 // console.log(await transcriptOf('00128'));
 //   two rows: CS-101 with 12, CS-347 with 10
@@ -63,17 +63,17 @@ console.log((await pool.query(
 // --- Part C ---
 // console.log(await firstCourseTitle('00128'));             // Intro. to Computer Science
 // console.log(await firstCourseTitle('99999'));             // undefined
-// console.time('one after another');
-// console.log(await overviewSlowly());
-// console.timeEnd('one after another');   // about 600 ms
-// console.time('together');
-// console.log(await overview());
-// console.timeEnd('together');            // about 200 ms
+ //console.time('one after another');
+ //console.log(await overviewSlowly());
+ //console.timeEnd('one after another');   // about 600 ms
+ //console.time('together');
+ //console.log(await overview());
+ //console.timeEnd('together');            // about 200 ms
 //   the same three numbers, in a third of the time
 
 // --- Part C3, and tidying up ---
 //await pool.query("DELETE FROM takes WHERE id = '90000'");
 //console.log(await removeAndCheckBroken('90000'));         // true: still there
-//console.log(await removeAndCheck('90000'));               // false: really gone
+console.log(await removeAndCheck('90000'));               // false: really gone
 
 await pool.end();
