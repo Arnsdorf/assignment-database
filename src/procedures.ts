@@ -20,8 +20,11 @@ export interface TranscriptRow {
  * here as a rejected promise. Let it travel on: this one throws.
  */
 export async function transcriptOf(studentId: string): Promise<TranscriptRow[]> {
-  // TODO
-  throw new Error('not implemented');
+  const result = await pool.query(
+      'SELECT * FROM student_transcript($1)',
+      [studentId]
+  );
+return result.rows;
 }
 
 /**
@@ -34,9 +37,20 @@ export async function transcriptOf(studentId: string): Promise<TranscriptRow[]> 
  */
 export async function transcriptOrUndefined(
   studentId: string): Promise<TranscriptRow[] | undefined> {
-  // TODO
-  throw new Error('not implemented');
-}
+  try {
+    const result = await pool.query(
+        'SELECT * FROM student_transcript($1)',
+        [studentId]
+    );
+    return result.rows;
+
+  } catch (err) {
+    if ((err as {code?: string}).code === 'p0001') {
+      return undefined;
+    }
+  }
+
+  }
 
 /**
  * Enrols a student by calling the stored procedure:
@@ -51,6 +65,5 @@ export async function transcriptOrUndefined(
 export async function enrolWithProcedure(
   studentId: string, courseId: string, secId: string,
   semester: string, year: number): Promise<number> {
-  // TODO
-  throw new Error('not implemented');
+
 }

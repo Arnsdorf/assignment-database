@@ -49,9 +49,9 @@ console.log('connected');
 // console.log((await pool.query(
 //   "SELECT danish_grade('A') AS a, danish_grade('C-') AS c, danish_grade(NULL) AS n")).rows[0]);
 //   { a: '12', c: '02', n: null }
-// console.log(await transcriptOf('00128'));
+ console.log(await transcriptOf('00128'));
 //   two rows: CS-101 with 12, CS-347 with 10
-// console.log(await transcriptOrUndefined('99999'));        // undefined
+ console.log(await transcriptOrUndefined('99999'));        // undefined
 // try {
 //   await transcriptOf('99999');
 // } catch (err) {
