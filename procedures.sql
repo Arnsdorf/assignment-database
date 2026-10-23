@@ -86,4 +86,4 @@ END;
 $$;
 
 -- Test it:
---     CALL enrol_student('70557', 'CS-319', '1', 'Spring', 2018);
+--      CALL enrol_student('70557', 'CS-319', '1', 'Spring', 2018);

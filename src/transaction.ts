@@ -12,7 +12,7 @@ export interface EnrolInput {
 }
 
 /**
- * Enrols a student in a course section and adds the course credits to the
+ * Enrols a  student in a course section and adds the course credits to the
  * student's total.
  *
  * Two statements:
