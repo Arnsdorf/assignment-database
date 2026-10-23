@@ -33,17 +33,16 @@ CREATE OR REPLACE FUNCTION student_transcript(p_id varchar)
 RETURNS TABLE (course_id varchar, title varchar, grade varchar)
 LANGUAGE plpgsql AS $$
 BEGIN
-  -- TODO: raise an exception when there is no such student
-
-  -- TODO: return the courses this student takes, with converted grades
-  --       RETURN QUERY SELECT ... ;
-  RETURN;
-END;
+  IF NOT EXISTS (SELECT 1 FROM student WHERE id = p_id) THEN
+     RAISE EXCEPTION 'No student with id %', p_id;
+  END IF;
+  RETURN QUERY SELECT c.course_id AS "courseId", c.title, danish_grade(t.grade)::varchar AS grade FROM takes AS t JOIN course AS c ON t.course_id = c.course_id WHERE t.id = p_id ORDER BY c.course_id;
+END
 $$;
 
 -- Test it:
---     SELECT * FROM student_transcript('00128');   -- two rows, grades 12 and 10
---     SELECT * FROM student_transcript('99999');   -- an error
+    SELECT * FROM student_transcript('00128');   -- two rows, grades 12 and 10
+    SELECT * FROM student_transcript('99999');   -- an error
 
 
 -- B3. A PROCEDURE that changes several things.
@@ -69,10 +68,22 @@ LANGUAGE plpgsql AS $$
 DECLARE
   v_credits numeric;
 BEGIN
-  -- TODO
-  NULL;
+  SELECT credits INTO v_credits
+  FROM course
+  WHERE course_id = p_course_id;
+
+  IF NOT FOUND THEN
+      RAISE EXCEPTION 'Course with id % does not exist', p_course_id;
+  END IF;
+  INSERT INTO takes(id, course_id, sec_id, semester, year, grade)
+  VALUES (p_id, p_course_id, p_sec_id, p_semester, p_year, NULL);
+
+  UPDATE student
+  SET tot_cred = COALESCE(tot_cred, 0) + v_credits
+      WHERE id = p_id
+          RETURNING tot_cred into new_total;
 END;
 $$;
 
 -- Test it:
---     CALL enrol_student('70557', 'CS-319', '1', 'Spring', 2018);
+--      CALL enrol_student('70557', 'CS-319', '1', 'Spring', 2018);

@@ -20,8 +20,16 @@ export interface TranscriptRow {
  * here as a rejected promise. Let it travel on: this one throws.
  */
 export async function transcriptOf(studentId: string): Promise<TranscriptRow[]> {
-  // TODO
-  throw new Error('not implemented');
+  try{
+   const query = 'SELECT * FROM student_transcript($1)';
+   const result = await pool.query(query, [studentId]);
+
+   return result.rows;
+
+  }catch(error: any){
+    console.error(`'error while retrieving transcript: '${error.message}' `);
+    throw error;
+  }
 }
 
 /**
@@ -34,8 +42,14 @@ export async function transcriptOf(studentId: string): Promise<TranscriptRow[]> 
  */
 export async function transcriptOrUndefined(
   studentId: string): Promise<TranscriptRow[] | undefined> {
-  // TODO
-  throw new Error('not implemented');
+  try{
+      return await transcriptOf(studentId);
+  }catch (error: any){
+      if (error && error.code === 'P0001') {
+          throw undefined;
+      }
+      throw error;
+  }
 }
 
 /**
@@ -51,6 +65,12 @@ export async function transcriptOrUndefined(
 export async function enrolWithProcedure(
   studentId: string, courseId: string, secId: string,
   semester: string, year: number): Promise<number> {
-  // TODO
-  throw new Error('not implemented');
+
+  const { rows } = await pool.query(
+      "CALL enrol_student($1, $2, $3, $4, $5, NULL)",
+      [studentId, courseId, secId, semester, year]
+  );
+  
+  const newTotal = rows[0]?.new_total;
+  return Number(newTotal);
 }
